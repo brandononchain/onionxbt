@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import imgJustanonion1 from "figma:asset/f1fcc38275b40a30340e2ca59c8dbabaff8209f5.png";
 import AIChatInterface from '../components/AIChatInterface';
+import WalletGate from '../components/WalletGate';
 
 type Page = 'home' | 'chat';
 
@@ -20,7 +21,7 @@ export default function App() {
   }
 
   return (
-    <div className="w-full h-screen bg-black flex flex-col items-center justify-center p-4 sm:p-8">
+    <div className="w-full min-h-screen bg-black flex flex-col items-center justify-center p-4 sm:p-8">
       <div className="relative w-64 h-64 sm:w-80 sm:h-80 mb-6 sm:mb-8 onion-breathe">
         <div 
           className="w-full h-full bg-center bg-contain bg-no-repeat onion-rotate" 
@@ -32,7 +33,7 @@ export default function App() {
           I am just an onion
         </p>
       </div>
-      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center w-full max-w-sm sm:max-w-none sm:w-auto">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center w-full max-w-sm sm:max-w-none sm:w-auto mb-8">
         <button 
           onClick={handleEatMe}
           className="bg-transparent border border-green-400 text-green-400 px-6 py-3 sm:py-2 font-mono hover:bg-green-400 hover:text-black transition-colors text-sm sm:text-base"
@@ -42,6 +43,10 @@ export default function App() {
         <button className="bg-transparent border border-green-400 text-green-400 px-6 py-3 sm:py-2 font-mono hover:bg-green-400 hover:text-black transition-colors text-sm sm:text-base">
           Trade me
         </button>
+      </div>
+
+      <div className="w-full max-w-xl">
+        <WalletGate />
       </div>
     </div>
   );
