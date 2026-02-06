@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  onionxbt:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - AGENT_PROVIDER=${AGENT_PROVIDER:-anthropic}
+      - AGENT_MODEL=${AGENT_MODEL:-claude-sonnet-4-20250514}
+      - AGENT_API_KEY=${AGENT_API_KEY}
+      - LN_PROVIDER=${LN_PROVIDER:-lnbits}
+      - LN_ENDPOINT=${LN_ENDPOINT}
+      - LN_API_KEY=${LN_API_KEY}
+      - BTC_NETWORK=${BTC_NETWORK:-mainnet}
+      - BTC_XPUB=${BTC_XPUB}
+      - X_APP_KEY=${X_APP_KEY}
+      - X_APP_SECRET=${X_APP_SECRET}
+      - X_ACCESS_TOKEN=${X_ACCESS_TOKEN}
+      - X_ACCESS_SECRET=${X_ACCESS_SECRET}
+    volumes:
+      - onionxbt-data:/app/data
+      - tor-data:/var/lib/tor
+    restart: unless-stopped
+    
+  tor:
+    image: dperson/torproxy
+    ports:
+      - "9050:9050"
+      - "9051:9051"
+    volumes:
+      - tor-data:/var/lib/tor
+      - ./config/torrc:/etc/tor/torrc:ro
+    restart: unless-stopped
+
+  # Optional: LNbits for Lightning payments
+  lnbits:
+    image: lnbitsdocker/lnbits:latest
+    ports:
+      - "5000:5000"
+    environment:
+      - LNBITS_BACKEND_WALLET_CLASS=FakeWallet  # Change for production
+    volumes:
+      - lnbits-data:/app/data
+    restart: unless-stopped
+    profiles:
+      - with-lnbits
+
+volumes:
+  onionxbt-data:
+  tor-data:
+  lnbits-data:

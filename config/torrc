@@ -1,0 +1,25 @@
+# OnionXBT Tor Configuration
+
+# SOCKS proxy for applications
+SocksPort 9050
+
+# Control port for circuit management
+ControlPort 9051
+
+# Hidden service for the dashboard
+HiddenServiceDir /var/lib/tor/onionxbt/
+HiddenServicePort 80 127.0.0.1:3000
+
+# Security settings
+CookieAuthentication 1
+DataDirectory /var/lib/tor
+
+# Logging
+Log notice file /var/log/tor/notices.log
+
+# Circuit settings
+CircuitBuildTimeout 30
+NumEntryGuards 3
+
+# Exit policy (we're a client, not an exit)
+ExitPolicy reject *:*

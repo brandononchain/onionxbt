@@ -1,0 +1,77 @@
+{
+  "name": "onionxbt",
+  "version": "0.1.0",
+  "description": "OnionXBT - The uncensored, BTC-native AI agent that lives on clearnet and Tor",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "onion": "dist/cli/index.js",
+    "onionxbt": "dist/cli/index.js"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./sdk": "./dist/sdk/index.js",
+    "./sdk/react": "./dist/sdk/react.js"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "tsc && next build",
+    "start": "next start",
+    "cli": "node --import tsx src/cli/index.ts",
+    "api": "node --import tsx src/api/server.ts",
+    "agent": "node --import tsx src/agent/index.ts",
+    "tor": "tor -f config/torrc",
+    "x-bot": "node --import tsx src/x-bot/index.ts",
+    "db:migrate": "node --import tsx src/lib/db/migrate.ts",
+    "sdk:build": "tsc -p tsconfig.sdk.json"
+  },
+  "keywords": ["bitcoin", "ai", "agent", "tor", "lightning", "btc", "sdk", "api"],
+  "author": "OnionXBT",
+  "license": "MIT",
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.0",
+    "better-sqlite3": "^11.0.0",
+    "bitcoinjs-lib": "^7.0.0",
+    "ecpair": "^3.0.0",
+    "tiny-secp256k1": "^2.2.3",
+    "bip32": "^5.0.0",
+    "bip39": "^3.1.0",
+    "lnurl-pay": "^2.0.0",
+    "bolt11": "^1.4.1",
+    "socks-proxy-agent": "^8.0.0",
+    "tor-request": "^3.1.0",
+    "twitter-api-v2": "^1.17.0",
+    "openai": "^4.0.0",
+    "@anthropic-ai/sdk": "^0.30.0",
+    "ws": "^8.19.0",
+    "uuid": "^10.0.0",
+    "zod": "^3.23.0",
+    "recharts": "^2.12.0",
+    "express": "^5.0.0",
+    "cors": "^2.8.5",
+    "commander": "^12.0.0",
+    "chalk": "^5.3.0",
+    "dotenv": "^16.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/express": "^5.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/ws": "^8.5.0",
+    "typescript": "^5.6.0",
+    "tsx": "^4.19.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": { "optional": true },
+    "react-dom": { "optional": true }
+  }
+}

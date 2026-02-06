@@ -1,0 +1,6 @@
+export { Header } from './Header'
+export { Hero } from './Hero'
+export { PaymentGate } from './PaymentGate'
+export { ChatInterface } from './ChatInterface'
+export { SkillsMarketplace } from './SkillsMarketplace'
+export { Footer } from './Footer'

@@ -1,0 +1,83 @@
+@import 'tailwindcss';
+
+:root {
+  --btc-orange: #F7931A;
+  --btc-orange-light: #FFB84D;
+  --btc-orange-dark: #CC7A15;
+  --btc-black: #0D0D0D;
+  --btc-dark-gray: #1A1A1A;
+  --btc-medium-gray: #2D2D2D;
+  --onion-purple: #7D4698;
+  --onion-green: #7EBD00;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background: var(--btc-black);
+  color: #fff;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* BTC Orange Accent Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--btc-dark-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--btc-orange);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--btc-orange-light);
+}
+
+/* Glowing orange text */
+.glow-orange {
+  text-shadow: 0 0 10px var(--btc-orange), 0 0 20px var(--btc-orange), 0 0 30px var(--btc-orange);
+}
+
+/* Bitcoin logo animation */
+@keyframes btc-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.btc-spin {
+  animation: btc-spin 20s linear infinite;
+}
+
+/* Terminal-style text */
+.terminal-text {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* Gradient backgrounds */
+.bg-btc-gradient {
+  background: linear-gradient(135deg, var(--btc-black) 0%, var(--btc-dark-gray) 50%, var(--btc-medium-gray) 100%);
+}
+
+.bg-orange-gradient {
+  background: linear-gradient(135deg, var(--btc-orange-dark) 0%, var(--btc-orange) 50%, var(--btc-orange-light) 100%);
+}
+
+/* Onion layers effect */
+.onion-layers {
+  background: 
+    radial-gradient(circle at 50% 50%, transparent 20%, var(--btc-orange) 21%, transparent 22%),
+    radial-gradient(circle at 50% 50%, transparent 40%, var(--btc-orange) 41%, transparent 42%),
+    radial-gradient(circle at 50% 50%, transparent 60%, var(--btc-orange) 61%, transparent 62%);
+}

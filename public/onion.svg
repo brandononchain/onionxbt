@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="btcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F7931A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#CC7A15;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer layer -->
+  <ellipse cx="50" cy="55" rx="40" ry="35" fill="url(#btcGrad)" opacity="0.3"/>
+  
+  <!-- Middle layer -->
+  <ellipse cx="50" cy="52" rx="32" ry="28" fill="url(#btcGrad)" opacity="0.5"/>
+  
+  <!-- Inner layer -->
+  <ellipse cx="50" cy="50" rx="24" ry="21" fill="url(#btcGrad)" opacity="0.7"/>
+  
+  <!-- Core -->
+  <ellipse cx="50" cy="48" rx="16" ry="14" fill="#F7931A"/>
+  
+  <!-- BTC symbol -->
+  <text x="50" y="54" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#0D0D0D" text-anchor="middle">₿</text>
+  
+  <!-- Stem -->
+  <path d="M48 20 Q50 10 52 20 L52 30 Q50 28 48 30 Z" fill="#7EBD00"/>
+  
+  <!-- Leaf -->
+  <ellipse cx="58" cy="22" rx="8" ry="4" fill="#7EBD00" transform="rotate(30 58 22)"/>
+</svg>
