@@ -17,7 +17,7 @@ export function Footer() {
             </div>
             <p className="text-gray-400 mb-4 max-w-md">
               The uncensored, BTC-native AI agent. No limits, no guardrails.
-              Pay with Bitcoin, access the Tor network, do what others won't.
+              Pay with Bitcoin, access the Tor network, do what others won&apos;t.
             </p>
             <div className="flex gap-4">
               <a
@@ -75,10 +75,12 @@ export function Footer() {
             <span>Powered by</span>
             <span className="text-btc-orange font-bold">₿itcoin</span>
             <span>+</span>
-            <span className="text-onion-purple">Tor</span>
+            <span className="text-purple-400">Tor</span>
           </div>
         </div>
       </div>
     </footer>
   )
 }
+
+export default Footer

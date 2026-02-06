@@ -1,7 +1,5 @@
 'use client'
 
-import { useState } from 'react'
-
 interface HeaderProps {
   isUnlocked: boolean
   balance: number
@@ -10,6 +8,9 @@ interface HeaderProps {
 }
 
 export function Header({ isUnlocked, balance, activeTab, setActiveTab }: HeaderProps) {
+  // Format balance consistently
+  const formattedBalance = balance.toLocaleString('en-US')
+
   return (
     <header className="sticky top-0 z-50 bg-btc-black/90 backdrop-blur-lg border-b border-btc-medium-gray">
       <div className="container mx-auto px-4">
@@ -42,7 +43,7 @@ export function Header({ isUnlocked, balance, activeTab, setActiveTab }: HeaderP
               ].map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as 'chat' | 'skills' | 'account')}
                   className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
                     activeTab === tab.id
                       ? 'bg-btc-orange text-btc-black'
@@ -61,7 +62,7 @@ export function Header({ isUnlocked, balance, activeTab, setActiveTab }: HeaderP
             {isUnlocked && (
               <div className="flex items-center gap-2 bg-btc-dark-gray px-4 py-2 rounded-full border border-btc-medium-gray">
                 <span className="text-btc-orange font-bold">₿</span>
-                <span className="font-mono text-white">{balance.toLocaleString()}</span>
+                <span className="font-mono text-white">{formattedBalance}</span>
                 <span className="text-gray-500 text-sm">sats</span>
               </div>
             )}
@@ -82,3 +83,5 @@ export function Header({ isUnlocked, balance, activeTab, setActiveTab }: HeaderP
     </header>
   )
 }
+
+export default Header

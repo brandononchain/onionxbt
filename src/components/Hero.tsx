@@ -27,7 +27,7 @@ export function Hero() {
           <p className="text-xl md:text-2xl text-gray-400 mb-8 max-w-2xl mx-auto">
             No limits. No guardrails. Pay with Bitcoin.
             <br />
-            <span className="text-btc-orange">OnionXBT</span> does what others won't.
+            <span className="text-btc-orange">OnionXBT</span> does what others won&apos;t.
           </p>
 
           {/* Features */}
@@ -81,3 +81,5 @@ function FeatureCard({ icon, title, description }: { icon: string; title: string
     </div>
   )
 }
+
+export default Hero

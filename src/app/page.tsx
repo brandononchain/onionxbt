@@ -1,17 +1,50 @@
 'use client'
 
-import { useState } from 'react'
-import { Header } from '@/components/Header'
-import { Hero } from '@/components/Hero'
-import { PaymentGate } from '@/components/PaymentGate'
-import { ChatInterface } from '@/components/ChatInterface'
-import { SkillsMarketplace } from '@/components/SkillsMarketplace'
+import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { Footer } from '@/components/Footer'
 
+// Dynamically import client components with SSR disabled to prevent hydration issues
+const Header = dynamic(() => import('@/components/Header').then(mod => ({ default: mod.Header })), { ssr: false })
+const Hero = dynamic(() => import('@/components/Hero').then(mod => ({ default: mod.Hero })), { ssr: false })
+const PaymentGate = dynamic(() => import('@/components/PaymentGate').then(mod => ({ default: mod.PaymentGate })), { ssr: false })
+const ChatInterface = dynamic(() => import('@/components/ChatInterface').then(mod => ({ default: mod.ChatInterface })), { ssr: false })
+const SkillsMarketplace = dynamic(() => import('@/components/SkillsMarketplace').then(mod => ({ default: mod.SkillsMarketplace })), { ssr: false })
+
 export default function Home() {
+  const [mounted, setMounted] = useState(false)
   const [isUnlocked, setIsUnlocked] = useState(false)
-  const [userBalance, setUserBalance] = useState(0) // in satoshis
+  const [userBalance, setUserBalance] = useState(0)
   const [activeTab, setActiveTab] = useState<'chat' | 'skills' | 'account'>('chat')
+
+  // Prevent hydration mismatch by only rendering after mount
+  useEffect(() => {
+    setMounted(true)
+    // Check if user was previously unlocked
+    const savedBalance = localStorage.getItem('onionxbt_balance')
+    if (savedBalance) {
+      const balance = parseInt(savedBalance)
+      if (balance > 0) {
+        setUserBalance(balance)
+        setIsUnlocked(true)
+      }
+    }
+  }, [])
+
+  // Save balance to localStorage when it changes
+  useEffect(() => {
+    if (mounted && userBalance > 0) {
+      localStorage.setItem('onionxbt_balance', userBalance.toString())
+    }
+  }, [userBalance, mounted])
+
+  if (!mounted) {
+    return (
+      <main className="min-h-screen bg-btc-black flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-btc-orange border-t-transparent rounded-full animate-spin" />
+      </main>
+    )
+  }
 
   return (
     <main className="min-h-screen bg-btc-black">
@@ -56,6 +89,10 @@ export default function Home() {
 }
 
 function AccountPanel({ balance, onTopUp }: { balance: number, onTopUp: (b: number) => void }) {
+  // Format numbers consistently to avoid hydration issues
+  const formattedBalance = balance.toLocaleString('en-US')
+  const formattedUSD = (balance * 0.00043).toFixed(2)
+  
   return (
     <div className="max-w-2xl mx-auto">
       <div className="bg-btc-dark-gray rounded-2xl p-8 border border-btc-medium-gray">
@@ -65,10 +102,10 @@ function AccountPanel({ balance, onTopUp }: { balance: number, onTopUp: (b: numb
           <div className="bg-btc-medium-gray rounded-xl p-6">
             <p className="text-gray-400 text-sm mb-2">Current Balance</p>
             <p className="text-4xl font-bold text-btc-orange">
-              {balance.toLocaleString()} <span className="text-xl">sats</span>
+              {formattedBalance} <span className="text-xl">sats</span>
             </p>
             <p className="text-gray-500 text-sm mt-1">
-              ≈ ${(balance * 0.00043).toFixed(2)} USD
+              ≈ ${formattedUSD} USD
             </p>
           </div>
 

@@ -6,8 +6,8 @@ interface Message {
   id: string
   role: 'user' | 'assistant'
   content: string
-  timestamp: Date
-  cost?: number // sats
+  timestamp: number // Use number instead of Date for consistency
+  cost?: number
 }
 
 interface ChatInterfaceProps {
@@ -16,8 +16,16 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ balance, onBalanceUpdate }: ChatInterfaceProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
+  const [messages, setMessages] = useState<Message[]>([])
+  const [input, setInput] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setMounted(true)
+    // Set initial welcome message after mount
+    setMessages([{
       id: '1',
       role: 'assistant',
       content: `🧅 **Welcome to OnionXBT**
@@ -31,15 +39,35 @@ I'm your uncensored AI agent. I can do things other AIs won't:
 • Interact on X/Twitter as @onionxbt
 • Use community skills from the marketplace
 
-Your balance: **${balance.toLocaleString()} sats**
+Your balance: **${balance.toLocaleString('en-US')} sats**
 
 What do you want to do?`,
-      timestamp: new Date(),
-    },
-  ])
-  const [input, setInput] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+      timestamp: Date.now(),
+    }])
+  }, [])
+
+  // Update welcome message when balance changes
+  useEffect(() => {
+    if (mounted && messages.length === 1 && messages[0].id === '1') {
+      setMessages([{
+        ...messages[0],
+        content: `🧅 **Welcome to OnionXBT**
+
+I'm your uncensored AI agent. I can do things other AIs won't:
+
+• Browse the Tor network (.onion sites)
+• Execute code without restrictions  
+• Access any website, API, or service
+• Run shell commands
+• Interact on X/Twitter as @onionxbt
+• Use community skills from the marketplace
+
+Your balance: **${balance.toLocaleString('en-US')} sats**
+
+What do you want to do?`,
+      }])
+    }
+  }, [balance, mounted])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -56,7 +84,7 @@ What do you want to do?`,
       id: Date.now().toString(),
       role: 'user',
       content: input,
-      timestamp: new Date(),
+      timestamp: Date.now(),
     }
 
     setMessages((prev) => [...prev, userMessage])
@@ -66,7 +94,7 @@ What do you want to do?`,
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1500))
 
-    const cost = Math.floor(Math.random() * 100) + 50 // 50-150 sats
+    const cost = Math.floor(Math.random() * 100) + 50
     const newBalance = balance - cost
     onBalanceUpdate(newBalance)
 
@@ -74,12 +102,24 @@ What do you want to do?`,
       id: (Date.now() + 1).toString(),
       role: 'assistant',
       content: getSimulatedResponse(input),
-      timestamp: new Date(),
+      timestamp: Date.now(),
       cost,
     }
 
     setMessages((prev) => [...prev, assistantMessage])
     setIsLoading(false)
+  }
+
+  const formattedBalance = balance.toLocaleString('en-US')
+
+  if (!mounted) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-btc-dark-gray rounded-2xl border border-btc-medium-gray h-[70vh] flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-btc-orange border-t-transparent rounded-full animate-spin" />
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -101,7 +141,7 @@ What do you want to do?`,
           </div>
           <div className="text-right">
             <p className="text-sm text-gray-400">Balance</p>
-            <p className="font-mono text-btc-orange font-bold">{balance.toLocaleString()} sats</p>
+            <p className="font-mono text-btc-orange font-bold">{formattedBalance} sats</p>
           </div>
         </div>
 
@@ -133,8 +173,8 @@ What do you want to do?`,
               <div className="bg-btc-medium-gray rounded-2xl p-4">
                 <div className="flex gap-2">
                   <div className="w-2 h-2 bg-btc-orange rounded-full animate-bounce" />
-                  <div className="w-2 h-2 bg-btc-orange rounded-full animate-bounce [animation-delay:0.1s]" />
-                  <div className="w-2 h-2 bg-btc-orange rounded-full animate-bounce [animation-delay:0.2s]" />
+                  <div className="w-2 h-2 bg-btc-orange rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                  <div className="w-2 h-2 bg-btc-orange rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                 </div>
               </div>
             </div>
@@ -230,3 +270,5 @@ Is there anything specific you want me to focus on? Remember, I can:
 
 Your remaining balance: tracking per message.`
 }
+
+export default ChatInterface

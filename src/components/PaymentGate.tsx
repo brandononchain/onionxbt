@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { BitcoinPaymentQR } from './QRCode'
 
 interface PaymentGateProps {
   onUnlock: () => void
@@ -9,30 +8,36 @@ interface PaymentGateProps {
 }
 
 export function PaymentGate({ onUnlock, onBalanceUpdate }: PaymentGateProps) {
+  const [mounted, setMounted] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<'lightning' | 'onchain'>('lightning')
-  const [selectedAmount, setSelectedAmount] = useState(10000) // 10k sats default
+  const [selectedAmount, setSelectedAmount] = useState(10000)
   const [invoice, setInvoice] = useState<string | null>(null)
   const [btcAddress, setBtcAddress] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [status, setStatus] = useState<'idle' | 'waiting' | 'confirmed'>('idle')
   const [paymentId, setPaymentId] = useState<string | null>(null)
 
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const amounts = [
-    { sats: 10000, label: '10k sats', usd: 4.30 },
-    { sats: 50000, label: '50k sats', usd: 21.50 },
-    { sats: 100000, label: '100k sats', usd: 43.00 },
-    { sats: 500000, label: '500k sats', usd: 215.00 },
+    { sats: 10000, label: '10k sats', usd: '4.30' },
+    { sats: 50000, label: '50k sats', usd: '21.50' },
+    { sats: 100000, label: '100k sats', usd: '43.00' },
+    { sats: 500000, label: '500k sats', usd: '215.00' },
   ]
 
   const generatePayment = async () => {
     setIsLoading(true)
     
     try {
-      // Generate user ID if not exists
-      let userId = localStorage.getItem('onionxbt_user_id')
+      let userId = typeof window !== 'undefined' ? localStorage.getItem('onionxbt_user_id') : null
       if (!userId) {
         userId = crypto.randomUUID()
-        localStorage.setItem('onionxbt_user_id', userId)
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('onionxbt_user_id', userId)
+        }
       }
 
       const response = await fetch('/api/payment/create', {
@@ -55,7 +60,6 @@ export function PaymentGate({ onUnlock, onBalanceUpdate }: PaymentGateProps) {
           setBtcAddress(data.address)
         }
         setStatus('waiting')
-        // Start polling for payment confirmation
         startPaymentPolling(data.paymentId)
       } else {
         console.error('Payment creation failed:', data.error)
@@ -82,22 +86,10 @@ export function PaymentGate({ onUnlock, onBalanceUpdate }: PaymentGateProps) {
       } catch (err) {
         console.error('Polling error:', err)
       }
-    }, 3000) // Poll every 3 seconds
+    }, 3000)
 
-    // Stop polling after 30 minutes
     setTimeout(() => clearInterval(pollInterval), 30 * 60 * 1000)
   }
-
-  // Mock payment confirmation
-  useEffect(() => {
-    if (status === 'waiting') {
-      const timer = setTimeout(() => {
-        // In production, this would poll an API
-        // For demo, auto-confirm after 5 seconds
-      }, 5000)
-      return () => clearTimeout(timer)
-    }
-  }, [status])
 
   const simulatePayment = () => {
     setStatus('confirmed')
@@ -105,6 +97,20 @@ export function PaymentGate({ onUnlock, onBalanceUpdate }: PaymentGateProps) {
     setTimeout(() => {
       onUnlock()
     }, 1500)
+  }
+
+  if (!mounted) {
+    return (
+      <section className="py-16" id="payment">
+        <div className="container mx-auto px-4">
+          <div className="max-w-lg mx-auto">
+            <div className="bg-btc-dark-gray rounded-3xl p-8 border border-btc-medium-gray shadow-2xl h-96 flex items-center justify-center">
+              <div className="w-8 h-8 border-2 border-btc-orange border-t-transparent rounded-full animate-spin" />
+            </div>
+          </div>
+        </div>
+      </section>
+    )
   }
 
   return (
@@ -200,19 +206,32 @@ export function PaymentGate({ onUnlock, onBalanceUpdate }: PaymentGateProps) {
 
             {status === 'waiting' && (
               <div className="text-center">
-                {/* QR Code with proper component */}
-                <BitcoinPaymentQR
-                  btcAddress={btcAddress || undefined}
-                  lightningInvoice={invoice || undefined}
-                  amount={selectedAmount}
-                />
+                {/* QR Code placeholder */}
+                <div className="bg-white p-4 rounded-2xl inline-block mb-6">
+                  <div className="w-48 h-48 bg-gradient-to-br from-btc-orange/20 to-btc-orange/5 flex items-center justify-center rounded-lg">
+                    <div className="text-center">
+                      <span className="text-4xl">📱</span>
+                      <p className="text-gray-500 text-xs mt-2">Scan QR Code</p>
+                    </div>
+                  </div>
+                </div>
 
-                <div className="flex items-center justify-center gap-2 text-gray-400 mt-6 mb-6">
+                {/* Invoice/Address */}
+                <div className="bg-btc-medium-gray rounded-xl p-4 mb-6">
+                  <p className="text-xs text-gray-500 mb-2">
+                    {paymentMethod === 'lightning' ? 'Lightning Invoice' : 'Bitcoin Address'}
+                  </p>
+                  <p className="font-mono text-sm text-gray-300 break-all">
+                    {paymentMethod === 'lightning' ? invoice : btcAddress}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-center gap-2 text-gray-400 mb-6">
                   <div className="w-4 h-4 border-2 border-btc-orange border-t-transparent rounded-full animate-spin" />
                   Waiting for payment...
                 </div>
 
-                {/* Demo button - remove in production */}
+                {/* Demo button */}
                 <button
                   onClick={simulatePayment}
                   className="text-btc-orange hover:underline text-sm"
@@ -237,3 +256,5 @@ export function PaymentGate({ onUnlock, onBalanceUpdate }: PaymentGateProps) {
     </section>
   )
 }
+
+export default PaymentGate

@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface Skill {
   id: string
   name: string
   description: string
   author: string
-  price: number // 0 = free, otherwise sats
+  price: number
   installs: number
   rating: number
   tags: string[]
@@ -106,9 +106,29 @@ const mockSkills: Skill[] = [
 ]
 
 export function SkillsMarketplace() {
+  const [mounted, setMounted] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [filter, setFilter] = useState<'all' | 'free' | 'paid'>('all')
-  const [installedSkills, setInstalledSkills] = useState<string[]>(['1', '3'])
+  const [installedSkills, setInstalledSkills] = useState<string[]>([])
+
+  useEffect(() => {
+    setMounted(true)
+    // Load installed skills from localStorage
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('onionxbt_installed_skills')
+      if (saved) {
+        setInstalledSkills(JSON.parse(saved))
+      } else {
+        setInstalledSkills(['1', '3']) // Default installed
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (mounted && typeof window !== 'undefined') {
+      localStorage.setItem('onionxbt_installed_skills', JSON.stringify(installedSkills))
+    }
+  }, [installedSkills, mounted])
 
   const filteredSkills = mockSkills.filter((skill) => {
     const matchesSearch =
@@ -126,6 +146,16 @@ export function SkillsMarketplace() {
 
   const installSkill = (skillId: string) => {
     setInstalledSkills((prev) => [...prev, skillId])
+  }
+
+  if (!mounted) {
+    return (
+      <div className="max-w-6xl mx-auto">
+        <div className="h-96 flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-btc-orange border-t-transparent rounded-full animate-spin" />
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -226,7 +256,7 @@ function SkillCard({
           </span>
         ) : (
           <span className="bg-btc-orange/20 text-btc-orange text-xs font-bold px-2 py-1 rounded-full">
-            {skill.price.toLocaleString()} sats
+            {skill.price.toLocaleString('en-US')} sats
           </span>
         )}
       </div>
@@ -248,7 +278,7 @@ function SkillCard({
 
       {/* Stats */}
       <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-        <span>⬇️ {skill.installs.toLocaleString()}</span>
+        <span>⬇️ {skill.installs.toLocaleString('en-US')}</span>
         <span>⭐ {skill.rating}</span>
       </div>
 
@@ -265,9 +295,11 @@ function SkillCard({
           onClick={onInstall}
           className="w-full bg-btc-orange hover:bg-btc-orange-light text-btc-black font-bold py-3 rounded-xl transition-all"
         >
-          {skill.price === 0 ? 'Install' : `Buy for ${skill.price.toLocaleString()} sats`}
+          {skill.price === 0 ? 'Install' : `Buy for ${skill.price.toLocaleString('en-US')} sats`}
         </button>
       )}
     </div>
   )
 }
+
+export default SkillsMarketplace
