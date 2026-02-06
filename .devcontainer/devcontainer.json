@@ -1,0 +1,42 @@
+{
+  "name": "OnionXBT Development",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:22",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    }
+  },
+  "forwardPorts": [3000, 3001, 9050],
+  "postCreateCommand": "npm install && mkdir -p data",
+  "postStartCommand": "echo '🧅 OnionXBT Codespace Ready! Run: npm run dev'",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "ms-python.python"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+      }
+    }
+  },
+  "portsAttributes": {
+    "3000": {
+      "label": "OnionXBT Dashboard",
+      "onAutoForward": "openBrowser"
+    },
+    "3001": {
+      "label": "OnionXBT API",
+      "onAutoForward": "notify"
+    }
+  },
+  "remoteEnv": {
+    "AGENT_PROVIDER": "anthropic",
+    "AGENT_MODEL": "claude-sonnet-4-20250514",
+    "NODE_ENV": "development"
+  }
+}
